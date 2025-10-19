@@ -11,7 +11,7 @@ void main() async {
       apiKey: "AIzaSyBEm3vkiHXXjfFB3AVA1hUkDNp3brfq7Jg",
       authDomain: "flutter-project-55b51.firebaseapp.com",
       projectId: "flutter-project-55b51",
-      storageBucket: "flutter-project-55b51.firebasestorage.app",
+      storageBucket: "flutter-project-55b51.appspot.com",
       messagingSenderId: "56355879413",
       appId: "1:56355879413:web:ed1567abaaf497c83108bc",
       measurementId: "G-QB4X7JBRD4",

@@ -12,10 +12,13 @@ class AuthService {
       final cred = await _auth.createUserWithEmailAndPassword(
           email: email, password: password);
       return cred.user;
+    } on FirebaseAuthException catch (e) {
+      log("Auth error (signup): ${e.code} ${e.message}");
+      throw Exception(e.message ?? 'Failed to create account');
     } catch (e) {
-      log("Something went wrong");
+      log("Something went wrong: $e");
+      throw Exception('Unexpected error during signup');
     }
-    return null;
   }
 
   Future<User?> loginUserWithEmailAndPassword(
@@ -24,10 +27,13 @@ class AuthService {
       final cred = await _auth.signInWithEmailAndPassword(
           email: email, password: password);
       return cred.user;
+    } on FirebaseAuthException catch (e) {
+      log("Auth error (login): ${e.code} ${e.message}");
+      throw Exception(e.message ?? 'Failed to login');
     } catch (e) {
-      log("Something went wrong");
+      log("Something went wrong: $e");
+      throw Exception('Unexpected error during login');
     }
-    return null;
   }
 
   Future<User?> createUserWithStudentId(String studentId, String password) async {
@@ -35,10 +41,13 @@ class AuthService {
       final cred = await _auth.createUserWithEmailAndPassword(
           email: _idToEmail(studentId), password: password);
       return cred.user;
+    } on FirebaseAuthException catch (e) {
+      log("Auth error (signup-id): ${e.code} ${e.message}");
+      throw Exception(e.message ?? 'Failed to create account');
     } catch (e) {
-      log("Something went wrong");
+      log("Something went wrong: $e");
+      throw Exception('Unexpected error during signup');
     }
-    return null;
   }
 
   Future<User?> loginUserWithStudentId(String studentId, String password) async {
@@ -46,17 +55,24 @@ class AuthService {
       final cred = await _auth.signInWithEmailAndPassword(
           email: _idToEmail(studentId), password: password);
       return cred.user;
+    } on FirebaseAuthException catch (e) {
+      log("Auth error (login-id): ${e.code} ${e.message}");
+      throw Exception(e.message ?? 'Failed to login');
     } catch (e) {
-      log("Something went wrong");
+      log("Something went wrong: $e");
+      throw Exception('Unexpected error during login');
     }
-    return null;
   }
 
   Future<void> signout() async {
     try {
       await _auth.signOut();
+    } on FirebaseAuthException catch (e) {
+      log("Auth error (signout): ${e.code} ${e.message}");
+      throw Exception(e.message ?? 'Failed to sign out');
     } catch (e) {
-      log("Something went wrong");
+      log("Something went wrong: $e");
+      throw Exception('Unexpected error during signout');
     }
   }
 }

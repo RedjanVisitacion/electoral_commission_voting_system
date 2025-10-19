@@ -22,6 +22,7 @@ class _LoginScreenState extends State<LoginScreen> {
   final _auth = AuthService();
   final _studentId = TextEditingController();
   final _password = TextEditingController();
+  bool _loading = false;
 
   @override
   void dispose() {
@@ -50,16 +51,17 @@ class _LoginScreenState extends State<LoginScreen> {
             CustomTextField(
               hint: "Enter Password",
               label: "Password",
+              isPassword: true,
               controller: _password,
             ),
             const SizedBox(height: 30),
             CustomButton(
               label: "Login",
-              onPressed: _login,
+              onPressed: _loading ? null : _login,
             ),
             const SizedBox(height: 5),
             Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-              const Text("Already have an account? "),
+              const Text("Don't have an account? "),
               InkWell(
                 onTap: () => goToSignup(context),
                 child:
@@ -84,12 +86,42 @@ class _LoginScreenState extends State<LoginScreen> {
       );
 
   _login() async {
-    final user =
-        await _auth.loginUserWithStudentId(_studentId.text.trim(), _password.text);
+    final id = _studentId.text.trim();
+    final pass = _password.text;
 
-    if (user != null) {
+    if (id.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Student ID is required')),
+      );
+      return;
+    }
+    if (pass.length < 6) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Password must be at least 6 characters')),
+      );
+      return;
+    }
+
+    setState(() => _loading = true);
+    try {
+      final user = await _auth.loginUserWithStudentId(id, pass);
+      if (user == null) {
+        if (!mounted) return;
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Login failed')),
+        );
+        return;
+      }
+
       log("User Logged In");
-      final role = await UserService().getUserRole(user.uid);
+      // Do not block navigation on Firestore; upsert in background
+      // and try to get role with a short timeout
+      UserService()
+          .upsertUser(uid: user.uid, studentId: id)
+          .catchError((_) {});
+      final role = await UserService()
+          .getUserRole(user.uid)
+          .timeout(const Duration(seconds: 1), onTimeout: () => null);
       if (!mounted) return;
       if (role == 'admin') {
         Navigator.pushReplacement(
@@ -107,6 +139,14 @@ class _LoginScreenState extends State<LoginScreen> {
           MaterialPageRoute(builder: (_) => const SelectRoleScreen()),
         );
       }
+    } catch (e) {
+      if (!mounted) return;
+      final msg = e is Exception ? e.toString() : 'Login error';
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(msg.replaceFirst('Exception: ', ''))),
+      );
+    } finally {
+      if (mounted) setState(() => _loading = false);
     }
   }
 }

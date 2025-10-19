@@ -22,6 +22,7 @@ class _SignupScreenState extends State<SignupScreen> {
   final _name = TextEditingController();
   final _studentId = TextEditingController();
   final _password = TextEditingController();
+  bool _loading = false;
 
   @override
   void dispose() {
@@ -65,7 +66,7 @@ class _SignupScreenState extends State<SignupScreen> {
             const SizedBox(height: 30),
             CustomButton(
               label: "Signup",
-              onPressed: _signup,
+              onPressed: _loading ? null : _signup,
             ),
             const SizedBox(height: 5),
             Row(mainAxisAlignment: MainAxisAlignment.center, children: [
@@ -93,20 +94,57 @@ class _SignupScreenState extends State<SignupScreen> {
       );
 
   _signup() async {
-    final user =
-        await _auth.createUserWithStudentId(_studentId.text.trim(), _password.text);
-    if (user != null) {
-      log("User Created Succesfully");
-      await UserService().upsertUser(
-        uid: user.uid,
-        name: _name.text,
-        studentId: _studentId.text.trim(),
+    final name = _name.text.trim();
+    final id = _studentId.text.trim();
+    final pass = _password.text;
+
+    if (name.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Name is required')),
       );
+      return;
+    }
+    if (id.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Student ID is required')),
+      );
+      return;
+    }
+    if (pass.length < 6) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Password must be at least 6 characters')),
+      );
+      return;
+    }
+
+    setState(() => _loading = true);
+    try {
+      final user = await _auth.createUserWithStudentId(id, pass);
+      if (user == null) {
+        if (!mounted) return;
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Signup failed')),
+        );
+        return;
+      }
+      log("User Created Succesfully");
+      // Do not block navigation on Firestore
+      UserService()
+          .upsertUser(uid: user.uid, name: name, studentId: id)
+          .catchError((_) {});
       if (!mounted) return;
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(builder: (_) => const SelectRoleScreen()),
       );
+    } catch (e) {
+      if (!mounted) return;
+      final msg = e is Exception ? e.toString() : 'Signup error';
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(msg.replaceFirst('Exception: ', ''))),
+      );
+    } finally {
+      if (mounted) setState(() => _loading = false);
     }
   }
 }

@@ -23,8 +23,17 @@ class HomeScreen extends StatelessWidget {
             CustomButton(
               label: "Sign Out",
               onPressed: () async {
-                await auth.signout();
-                goToLogin(context);
+                try {
+                  await auth.signout();
+                  if (!context.mounted) return;
+                  goToLogin(context);
+                } catch (e) {
+                  if (!context.mounted) return;
+                  final msg = e is Exception ? e.toString() : 'Sign out error';
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text(msg.replaceFirst('Exception: ', ''))),
+                  );
+                }
               },
             )
           ],

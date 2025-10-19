@@ -32,4 +32,25 @@ class UserService {
     };
     await _users.doc(uid).set(data, SetOptions(merge: true));
   }
+
+  Future<String?> findUidByStudentId(String studentId) async {
+    final q = await _users.where('studentId', isEqualTo: studentId).limit(1).get();
+    if (q.docs.isEmpty) return null;
+    return q.docs.first.id;
+  }
+
+  Future<void> setPresentCode({required String uid, required String code}) async {
+    await _users.doc(uid).set({
+      'presentCode': code,
+      'presentCodeCreatedAt': FieldValue.serverTimestamp(),
+    }, SetOptions(merge: true));
+  }
+
+  Future<void> setPresentCodeForStudentId({required String studentId, required String code}) async {
+    await _db.collection('present_codes').doc(studentId).set({
+      'studentId': studentId,
+      'presentCode': code,
+      'createdAt': FieldValue.serverTimestamp(),
+    });
+  }
 }
