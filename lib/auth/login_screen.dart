@@ -60,14 +60,6 @@ class _LoginScreenState extends State<LoginScreen> {
               onPressed: _loading ? null : _login,
             ),
             const SizedBox(height: 5),
-            Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-              const Text("Don't have an account? "),
-              InkWell(
-                onTap: () => goToSignup(context),
-                child:
-                    const Text("Signup", style: TextStyle(color: Colors.red)),
-              )
-            ]),
             const Spacer()
           ],
         ),
@@ -87,7 +79,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
   _login() async {
     final id = _studentId.text.trim();
-    final pass = _password.text;
+    final pass = _password.text.trim();
 
     if (id.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(

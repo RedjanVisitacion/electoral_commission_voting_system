@@ -44,7 +44,19 @@ class SelectRoleScreen extends StatelessWidget {
   Future<void> _chooseRole(BuildContext context, String role) async {
     final uid = FirebaseAuth.instance.currentUser?.uid;
     if (uid == null) return;
-    await UserService().setUserRole(uid: uid, role: role);
+    try {
+      // Don't let Firestore block navigation; cap to 1s
+      await UserService()
+          .setUserRole(uid: uid, role: role)
+          .timeout(const Duration(seconds: 1));
+    } catch (_) {
+      // Non-fatal: show a brief message, continue navigation
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Saved role later once online')),
+        );
+      }
+    }
 
     if (!context.mounted) return;
     if (role == 'admin') {

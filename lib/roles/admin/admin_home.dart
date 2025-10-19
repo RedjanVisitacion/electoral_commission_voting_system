@@ -3,6 +3,7 @@ import 'package:flutter_project/auth/auth_service.dart';
 import 'package:flutter_project/auth/login_screen.dart';
 import 'package:flutter_project/widgets/placeholder_page.dart';
 import 'package:flutter_project/roles/admin/generate_qr_screen.dart';
+import 'package:flutter_project/roles/admin/admin_register_user_screen.dart';
 
 class AdminHome extends StatelessWidget {
   const AdminHome({super.key});
@@ -18,6 +19,13 @@ class AdminHome extends StatelessWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
+              _fullBtn(context, 'Register Users', () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (_) => const AdminRegisterUserScreen()),
+                );
+              }),
+              const SizedBox(height: 12),
               _fullBtn(context, 'Generate QR Codes', () {
                 Navigator.push(
                   context,
