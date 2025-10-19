@@ -20,14 +20,13 @@ class LoginScreen extends StatefulWidget {
 
 class _LoginScreenState extends State<LoginScreen> {
   final _auth = AuthService();
-
-  final _email = TextEditingController();
+  final _studentId = TextEditingController();
   final _password = TextEditingController();
 
   @override
   void dispose() {
     super.dispose();
-    _email.dispose();
+    _studentId.dispose();
     _password.dispose();
   }
 
@@ -43,9 +42,9 @@ class _LoginScreenState extends State<LoginScreen> {
                 style: TextStyle(fontSize: 40, fontWeight: FontWeight.w500)),
             const SizedBox(height: 50),
             CustomTextField(
-              hint: "Enter Email",
-              label: "Email",
-              controller: _email,
+              hint: "Enter Student ID",
+              label: "Student ID",
+              controller: _studentId,
             ),
             const SizedBox(height: 20),
             CustomTextField(
@@ -86,7 +85,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
   _login() async {
     final user =
-        await _auth.loginUserWithEmailAndPassword(_email.text, _password.text);
+        await _auth.loginUserWithStudentId(_studentId.text.trim(), _password.text);
 
     if (user != null) {
       log("User Logged In");

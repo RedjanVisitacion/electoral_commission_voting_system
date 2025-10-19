@@ -10,21 +10,23 @@ class UserService {
     return doc.data()?['role'] as String?;
   }
 
-  Future<void> setUserRole({required String uid, required String role, String? email, String? name}) async {
+  Future<void> setUserRole({required String uid, required String role, String? email, String? name, String? studentId}) async {
     final data = <String, dynamic>{
       'role': role,
       if (email != null) 'email': email,
       if (name != null) 'name': name,
+      if (studentId != null) 'studentId': studentId,
       'updatedAt': FieldValue.serverTimestamp(),
       'createdAt': FieldValue.serverTimestamp(),
     };
     await _users.doc(uid).set(data, SetOptions(merge: true));
   }
 
-  Future<void> upsertUser({required String uid, String? email, String? name}) async {
+  Future<void> upsertUser({required String uid, String? email, String? name, String? studentId}) async {
     final data = <String, dynamic>{
       if (email != null) 'email': email,
       if (name != null) 'name': name,
+      if (studentId != null) 'studentId': studentId,
       'updatedAt': FieldValue.serverTimestamp(),
       'createdAt': FieldValue.serverTimestamp(),
     };

@@ -20,14 +20,14 @@ class _SignupScreenState extends State<SignupScreen> {
   final _auth = AuthService();
 
   final _name = TextEditingController();
-  final _email = TextEditingController();
+  final _studentId = TextEditingController();
   final _password = TextEditingController();
 
   @override
   void dispose() {
     super.dispose();
     _name.dispose();
-    _email.dispose();
+    _studentId.dispose();
     _password.dispose();
   }
 
@@ -51,9 +51,9 @@ class _SignupScreenState extends State<SignupScreen> {
             ),
             const SizedBox(height: 20),
             CustomTextField(
-              hint: "Enter Email",
-              label: "Email",
-              controller: _email,
+              hint: "Enter Student ID",
+              label: "Student ID",
+              controller: _studentId,
             ),
             const SizedBox(height: 20),
             CustomTextField(
@@ -94,13 +94,13 @@ class _SignupScreenState extends State<SignupScreen> {
 
   _signup() async {
     final user =
-        await _auth.createUserWithEmailAndPassword(_email.text, _password.text);
+        await _auth.createUserWithStudentId(_studentId.text.trim(), _password.text);
     if (user != null) {
       log("User Created Succesfully");
       await UserService().upsertUser(
         uid: user.uid,
-        email: _email.text,
         name: _name.text,
+        studentId: _studentId.text.trim(),
       );
       if (!mounted) return;
       Navigator.pushReplacement(
