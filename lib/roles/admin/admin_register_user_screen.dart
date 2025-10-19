@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_project/services/user_service.dart';
+import 'package:flutter_project/widgets/textfield.dart';
 
 class AdminRegisterUserScreen extends StatefulWidget {
   const AdminRegisterUserScreen({super.key});
@@ -13,7 +14,7 @@ class AdminRegisterUserScreen extends StatefulWidget {
 class _AdminRegisterUserScreenState extends State<AdminRegisterUserScreen> {
   final _name = TextEditingController();
   final _studentId = TextEditingController();
-  final _password = TextEditingController(text: '12345678');
+  final _password = TextEditingController();
   bool _loading = false;
 
   @override
@@ -36,21 +37,26 @@ class _AdminRegisterUserScreenState extends State<AdminRegisterUserScreen> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              TextField(
-                controller: _name,
-                decoration: const InputDecoration(labelText: 'Name'),
+              const Align(
+                alignment: Alignment.centerLeft,
+                child: Text('Name', style: TextStyle(fontWeight: FontWeight.w600)),
               ),
+              const SizedBox(height: 6),
+              CustomTextField(hint: 'Enter name', label: 'Name', controller: _name),
               const SizedBox(height: 12),
-              TextField(
-                controller: _studentId,
-                decoration: const InputDecoration(labelText: 'Student ID'),
+              const Align(
+                alignment: Alignment.centerLeft,
+                child: Text('Student ID', style: TextStyle(fontWeight: FontWeight.w600)),
               ),
+              const SizedBox(height: 6),
+              CustomTextField(hint: 'Enter student ID', label: 'Student ID', controller: _studentId),
               const SizedBox(height: 12),
-              TextField(
-                controller: _password,
-                obscureText: true,
-                decoration: const InputDecoration(labelText: 'Password'),
+              const Align(
+                alignment: Alignment.centerLeft,
+                child: Text('Password', style: TextStyle(fontWeight: FontWeight.w600)),
               ),
+              const SizedBox(height: 6),
+              CustomTextField(hint: 'Enter password', label: 'Password', controller: _password, isPassword: true),
               const SizedBox(height: 20),
               SizedBox(
                 width: double.infinity,
