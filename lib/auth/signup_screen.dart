@@ -3,6 +3,8 @@ import 'dart:developer';
 import 'package:flutter_project/auth/auth_service.dart';
 import 'package:flutter_project/auth/login_screen.dart';
 import 'package:flutter_project/home_screen.dart';
+import 'package:flutter_project/services/user_service.dart';
+import 'package:flutter_project/roles/select_role_screen.dart';
 import 'package:flutter_project/widgets/button.dart';
 import 'package:flutter_project/widgets/textfield.dart';
 import 'package:flutter/material.dart';
@@ -95,7 +97,16 @@ class _SignupScreenState extends State<SignupScreen> {
         await _auth.createUserWithEmailAndPassword(_email.text, _password.text);
     if (user != null) {
       log("User Created Succesfully");
-      goToHome(context);
+      await UserService().upsertUser(
+        uid: user.uid,
+        email: _email.text,
+        name: _name.text,
+      );
+      if (!mounted) return;
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (_) => const SelectRoleScreen()),
+      );
     }
   }
 }

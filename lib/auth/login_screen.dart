@@ -3,6 +3,10 @@ import 'dart:developer';
 import 'package:flutter_project/auth/auth_service.dart';
 import 'package:flutter_project/auth/signup_screen.dart';
 import 'package:flutter_project/home_screen.dart';
+import 'package:flutter_project/services/user_service.dart';
+import 'package:flutter_project/roles/select_role_screen.dart';
+import 'package:flutter_project/roles/student/student_home.dart';
+import 'package:flutter_project/roles/admin/admin_home.dart';
 import 'package:flutter_project/widgets/button.dart';
 import 'package:flutter_project/widgets/textfield.dart';
 import 'package:flutter/material.dart';
@@ -86,7 +90,24 @@ class _LoginScreenState extends State<LoginScreen> {
 
     if (user != null) {
       log("User Logged In");
-      goToHome(context);
+      final role = await UserService().getUserRole(user.uid);
+      if (!mounted) return;
+      if (role == 'admin') {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (_) => const AdminHome()),
+        );
+      } else if (role == 'student') {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (_) => const StudentHome()),
+        );
+      } else {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (_) => const SelectRoleScreen()),
+        );
+      }
     }
   }
 }
