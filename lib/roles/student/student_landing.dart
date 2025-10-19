@@ -15,7 +15,7 @@ class StudentLanding extends StatelessWidget {
       _OrgItem('ELECOM', Icons.verified, () => _openElecom(context)),
       _OrgItem('SITE', Icons.computer, () => _open(context, 'SITE')),
       _OrgItem('PAFE', Icons.sports_soccer, () => _open(context, 'PAFE')),
-      _OrgItem('APFROTECHS', Icons.science, () => _open(context, 'APFROTECHS')),
+      _OrgItem('AFPROTECHS', Icons.science, () => _open(context, 'AFPROTECHS')),
       _OrgItem('ACCESS', Icons.school, () => _open(context, 'ACCESS')),
       _OrgItem('REDCOSS', Icons.volunteer_activism, () => _open(context, 'REDCOSS')),
     ];
