@@ -111,9 +111,18 @@ class _LoginScreenState extends State<LoginScreen> {
       UserService()
           .upsertUser(uid: user.uid, studentId: id)
           .catchError((_) {});
-      final role = await UserService()
+      var role = await UserService()
           .getUserRole(user.uid)
           .timeout(const Duration(seconds: 1), onTimeout: () => null);
+
+      // Auto-assign role if missing: default admin vs students
+      const adminId = '2023304637';
+      if (role == null) {
+        role = (id == adminId) ? 'admin' : 'student';
+        // Set role in background; don't block navigation
+        UserService().setUserRole(uid: user.uid, role: role!).catchError((_) {});
+      }
+
       if (!mounted) return;
       if (role == 'admin') {
         Navigator.pushReplacement(
