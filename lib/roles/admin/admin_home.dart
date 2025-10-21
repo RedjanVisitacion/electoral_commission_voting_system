@@ -47,13 +47,50 @@ class AdminHome extends StatelessWidget {
                 width: double.infinity,
                 child: OutlinedButton(
                   onPressed: () async {
-                    await auth.signout();
-                    if (!context.mounted) return;
-                    Navigator.pushAndRemoveUntil(
-                      context,
-                      MaterialPageRoute(builder: (_) => const LoginScreen()),
-                      (_) => false,
+                    final confirm = await showDialog<bool>(
+                      context: context,
+                      builder: (ctx) {
+                        final scheme = Theme.of(ctx).colorScheme;
+                        return AlertDialog(
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                          title: Row(
+                            children: [
+                              Icon(Icons.logout, color: scheme.error),
+                              const SizedBox(width: 8),
+                              const Text('Logout'),
+                            ],
+                          ),
+                          content: const Text('Are you sure you want to logout? You will be returned to the login screen.'),
+                          actions: [
+                            TextButton(
+                              onPressed: () => Navigator.of(ctx).pop(false),
+                              style: TextButton.styleFrom(foregroundColor: scheme.onSurface),
+                              child: const Text('Cancel'),
+                            ),
+                            ElevatedButton(
+                              onPressed: () => Navigator.of(ctx).pop(true),
+                              style: ElevatedButton.styleFrom(backgroundColor: scheme.error, foregroundColor: scheme.onError),
+                              child: const Text('Logout'),
+                            ),
+                          ],
+                        );
+                      },
                     );
+                    if (confirm != true) return;
+                    try {
+                      await auth.signout();
+                      if (!context.mounted) return;
+                      Navigator.pushAndRemoveUntil(
+                        context,
+                        MaterialPageRoute(builder: (_) => const LoginScreen()),
+                        (_) => false,
+                      );
+                    } catch (e) {
+                      if (!context.mounted) return;
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text(e.toString().replaceFirst('Exception: ', ''))),
+                      );
+                    }
                   },
                   child: const Text('Logout'),
                 ),
