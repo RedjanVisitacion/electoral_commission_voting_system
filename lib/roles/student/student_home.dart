@@ -10,20 +10,33 @@ class StudentHome extends StatelessWidget {
   Widget build(BuildContext context) {
     final auth = AuthService();
     return Scaffold(
-      appBar: AppBar(title: const Text('Student')),
+      appBar: AppBar(title: const Text('ELECOM Student')),
       body: Center(
         child: SizedBox(
           width: 320,
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              _fullBtn(context, 'Dashboard', () => _open(context, 'Dashboard')),
+              CircleAvatar(
+                radius: 44,
+                backgroundColor: Theme.of(context).colorScheme.primary.withOpacity(0.1),
+                child: Padding(
+                  padding: const EdgeInsets.all(8),
+                  child: Image.asset('assets/images/ELECOM.png', height: 56, fit: BoxFit.contain),
+                ),
+              ),
               const SizedBox(height: 12),
-              _fullBtn(context, 'Vote', () => _open(context, 'Vote')),
+              const Text('ELECOM', style: TextStyle(fontSize: 20, fontWeight: FontWeight.w600)),
+              const SizedBox(height: 4),
+              const Text('Student Dashboard', style: TextStyle(color: Colors.black87)),
+              const SizedBox(height: 24),
+              _menuBtn(context, Icons.dashboard, 'Dashboard', () => _open(context, 'Dashboard')),
               const SizedBox(height: 12),
-              _fullBtn(context, 'Confirm Vote', () => _open(context, 'Confirm Vote')),
+              _menuBtn(context, Icons.how_to_vote, 'Vote', () => _open(context, 'Vote')),
               const SizedBox(height: 12),
-              _fullBtn(context, 'Print Receipt', () => _open(context, 'Print Receipt')),
+              _menuBtn(context, Icons.task_alt, 'Confirm Vote', () => _open(context, 'Confirm Vote')),
+              const SizedBox(height: 12),
+              _menuBtn(context, Icons.receipt_long, 'Print Receipt', () => _open(context, 'Print Receipt')),
               const SizedBox(height: 24),
               SizedBox(
                 width: double.infinity,
@@ -84,10 +97,15 @@ class StudentHome extends StatelessWidget {
     );
   }
 
-  Widget _fullBtn(BuildContext context, String label, VoidCallback onPressed) {
+  Widget _menuBtn(BuildContext context, IconData icon, String label, VoidCallback onPressed) {
     return SizedBox(
       width: double.infinity,
-      child: ElevatedButton(onPressed: onPressed, child: Text(label)),
+      child: ElevatedButton.icon(
+        onPressed: onPressed,
+        icon: Icon(icon),
+        label: Text(label),
+        style: ElevatedButton.styleFrom(padding: const EdgeInsets.symmetric(vertical: 14)),
+      ),
     );
   }
 

@@ -15,6 +15,7 @@ class _AdminRegisterUserScreenState extends State<AdminRegisterUserScreen> {
   final _name = TextEditingController();
   final _studentId = TextEditingController();
   final _password = TextEditingController();
+  String? _department; // IT, BFPT, BTLED, EDUCATION
   bool _loading = false;
 
   @override
@@ -50,6 +51,22 @@ class _AdminRegisterUserScreenState extends State<AdminRegisterUserScreen> {
               ),
               const SizedBox(height: 6),
               CustomTextField(hint: 'Enter student ID', label: 'Student ID', controller: _studentId),
+              const SizedBox(height: 12),
+              const Align(
+                alignment: Alignment.centerLeft,
+                child: Text('Department', style: TextStyle(fontWeight: FontWeight.w600)),
+              ),
+              const SizedBox(height: 6),
+              DropdownButtonFormField<String>(
+                value: _department,
+                decoration: const InputDecoration(border: OutlineInputBorder(), hintText: 'Select department'),
+                items: const [
+                  DropdownMenuItem(value: 'IT', child: Text('IT')),
+                  DropdownMenuItem(value: 'BFPT', child: Text('BFPT')),
+                  DropdownMenuItem(value: 'BTLED', child: Text('BTLED')),
+                ],
+                onChanged: (v) => setState(() => _department = v),
+              ),
               const SizedBox(height: 12),
               const Align(
                 alignment: Alignment.centerLeft,
@@ -95,9 +112,9 @@ class _AdminRegisterUserScreenState extends State<AdminRegisterUserScreen> {
     final name = _name.text.trim();
     final id = _studentId.text.trim();
     final pass = _password.text.trim();
-    if (name.isEmpty || id.isEmpty || pass.length < 6) {
+    if (name.isEmpty || id.isEmpty || pass.length < 6 || _department == null) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Fill out name, student ID, and 6+ char password')),
+        const SnackBar(content: Text('Fill out name, student ID, department, and 6+ char password')),
       );
       return;
     }
@@ -113,8 +130,8 @@ class _AdminRegisterUserScreenState extends State<AdminRegisterUserScreen> {
           password: pass,
         );
         final uid = cred.user!.uid;
-        await UserService().upsertUser(uid: uid, name: name, studentId: id);
-        await UserService().setUserRole(uid: uid, role: 'student');
+        await UserService().upsertUser(uid: uid, name: name, studentId: id, departmentId: _department);
+        await UserService().setUserRole(uid: uid, role: 'student', departmentId: _department);
         if (!mounted) return;
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('User registered')),
@@ -126,8 +143,8 @@ class _AdminRegisterUserScreenState extends State<AdminRegisterUserScreen> {
           // User exists in Auth with an unknown password. Try to find uid via Firestore then update profile/role.
           final uid = await UserService().findUidByStudentId(id);
           if (uid != null) {
-            await UserService().upsertUser(uid: uid, name: name, studentId: id);
-            await UserService().setUserRole(uid: uid, role: 'student');
+            await UserService().upsertUser(uid: uid, name: name, studentId: id, departmentId: _department);
+            await UserService().setUserRole(uid: uid, role: 'student', departmentId: _department);
             if (!mounted) return;
             ScaffoldMessenger.of(context).showSnackBar(
               const SnackBar(content: Text('User exists. Profile updated; password unchanged.')),
