@@ -35,6 +35,24 @@ class StudentLanding extends StatelessWidget {
             tooltip: 'Logout',
             icon: const Icon(Icons.logout),
             onPressed: () async {
+              final confirm = await showDialog<bool>(
+                context: context,
+                builder: (ctx) => AlertDialog(
+                  title: const Text('Confirm Logout'),
+                  content: const Text('Are you sure you want to logout?'),
+                  actions: [
+                    TextButton(
+                      onPressed: () => Navigator.of(ctx).pop(false),
+                      child: const Text('Cancel'),
+                    ),
+                    ElevatedButton(
+                      onPressed: () => Navigator.of(ctx).pop(true),
+                      child: const Text('Logout'),
+                    ),
+                  ],
+                ),
+              );
+              if (confirm != true) return;
               try {
                 await AuthService().signout();
                 if (!context.mounted) return;

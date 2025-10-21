@@ -29,13 +29,38 @@ class StudentHome extends StatelessWidget {
                 width: double.infinity,
                 child: OutlinedButton(
                   onPressed: () async {
-                    await auth.signout();
-                    if (!context.mounted) return;
-                    Navigator.pushAndRemoveUntil(
-                      context,
-                      MaterialPageRoute(builder: (_) => const LoginScreen()),
-                      (_) => false,
+                    final confirm = await showDialog<bool>(
+                      context: context,
+                      builder: (ctx) => AlertDialog(
+                        title: const Text('Confirm Logout'),
+                        content: const Text('Are you sure you want to logout?'),
+                        actions: [
+                          TextButton(
+                            onPressed: () => Navigator.of(ctx).pop(false),
+                            child: const Text('Cancel'),
+                          ),
+                          ElevatedButton(
+                            onPressed: () => Navigator.of(ctx).pop(true),
+                            child: const Text('Logout'),
+                          ),
+                        ],
+                      ),
                     );
+                    if (confirm != true) return;
+                    try {
+                      await auth.signout();
+                      if (!context.mounted) return;
+                      Navigator.pushAndRemoveUntil(
+                        context,
+                        MaterialPageRoute(builder: (_) => const LoginScreen()),
+                        (_) => false,
+                      );
+                    } catch (e) {
+                      if (!context.mounted) return;
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text(e.toString().replaceFirst('Exception: ', ''))),
+                      );
+                    }
                   },
                   child: const Text('Logout'),
                 ),
