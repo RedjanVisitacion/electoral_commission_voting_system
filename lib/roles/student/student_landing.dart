@@ -60,18 +60,28 @@ class StudentLanding extends StatelessWidget {
               padding: const EdgeInsets.all(16),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
-                children: const [
-                  Text(
+                children: [
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(12),
+                    child: Image.asset(
+                      'assets/gifs/banner.gif',
+                      height: 160,
+                      width: double.infinity,
+                      fit: BoxFit.cover,
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                  const Text(
                     'About',
                     style: TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
                   ),
-                  SizedBox(height: 8),
-                  Text(
+                  const SizedBox(height: 8),
+                  const Text(
                     'SocieTree is an innovative digital ecosystem at the University of Science and Technology of Southern Philippines (USTP) that unites and empowers the diverse student organizations across campus. Acting as both a technological platform and community hub, SocieTREE facilitates seamless collaboration, enhances student engagement, and nurtures the next generation of leaders through integrated digital solutions.\n\nAs the central nexus for USTP\'s vibrant organizational landscape, SocieTREE cultivates a culture of excellence, innovation, and civic responsibility. The platform supports a thriving network of student groups, including: ',
                     style: TextStyle(color: Colors.black87),
                   ),
-                  SizedBox(height: 16),
-                  Text(
+                  const SizedBox(height: 16),
+                  const Text(
                     'Organizations',
                     style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
                   ),
