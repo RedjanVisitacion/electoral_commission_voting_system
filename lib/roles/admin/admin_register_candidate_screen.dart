@@ -67,6 +67,18 @@ class _AdminRegisterCandidateScreenState extends State<AdminRegisterCandidateScr
 
     setState(() => _saving = true);
     try {
+      // Determine department for candidate
+      String? deptForCandidate;
+      if (_org == 'USG' && _position == 'Representative') {
+        deptForCandidate = _department; // selected explicitly
+      } else if (_org == 'SITE') {
+        deptForCandidate = 'IT';
+      } else if (_org == 'AFPROTECHS') {
+        deptForCandidate = 'BFPT';
+      } else if (_org == 'PAFE') {
+        deptForCandidate = 'BTLED';
+      }
+
       final data = <String, dynamic>{
         'fullName': _fullName.text.trim(),
         'yearSection': _yearSection.text.trim(),
@@ -74,7 +86,7 @@ class _AdminRegisterCandidateScreenState extends State<AdminRegisterCandidateScr
         'photoUrl': _photoUrl.text.trim().isEmpty ? null : _photoUrl.text.trim(),
         'orgId': _org,
         'positionName': _position,
-        'departmentId': (_position == 'Representative' && _org == 'USG') ? _department : null,
+        'departmentId': deptForCandidate,
         'createdAt': FieldValue.serverTimestamp(),
         'updatedAt': FieldValue.serverTimestamp(),
       };

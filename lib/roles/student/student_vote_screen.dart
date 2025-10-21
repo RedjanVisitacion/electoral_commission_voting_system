@@ -28,21 +28,43 @@ class StudentVoteScreen extends StatelessWidget {
 
   Future<_UserInfo> _loadUserInfo() async {
     final uid = FirebaseAuth.instance.currentUser!.uid;
-    final doc = await FirebaseFirestore.instance.collection('users').doc(uid).get();
-    final data = doc.data() ?? {};
-    final dept = (data['departmentId'] as String?) ?? '';
+    String dept = '';
+    try {
+      final doc = await FirebaseFirestore.instance.collection('users').doc(uid).get();
+      final data = doc.data() ?? {};
+      // Try multiple possible keys for department
+      final candidates = [
+        data['departmentId'],
+        data['department'],
+        data['dept'],
+        data['Department'],
+      ];
+      for (final v in candidates) {
+        if (v is String && v.trim().isNotEmpty) {
+          dept = v.trim();
+          break;
+        }
+      }
+    } catch (_) {
+      // Permission denied or offline: proceed without department
+      dept = '';
+    }
     return _UserInfo(uid: uid, departmentId: dept);
   }
 
   List<String> _eligibleOrgs(String dept) {
-    // All students: USG + their department org
-    return [
-      'USG',
-      if (dept == 'IT') 'SITE'
-      else if (dept == 'BFPT') 'AFPROTECHS'
-      else if (dept == 'BTLED') 'PAFE'
-    ];
+    // All students: USG + their department org (dept-insensitive)
+    final d = _norm(dept);
+    final list = <String>['USG'];
+    if (d.isEmpty) {
+      // Unknown department: show only USG
+    } else if (d == 'IT') list.add('SITE');
+    else if (d == 'BFPT') list.add('AFPROTECHS');
+    else if (d == 'BTLED') list.add('PAFE');
+    return list;
   }
+
+  String _norm(String s) => s.trim().toUpperCase().replaceAll(' ', '');
 }
 
 class _CandidatesList extends StatelessWidget {
@@ -55,21 +77,30 @@ class _CandidatesList extends StatelessWidget {
     return StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
       stream: FirebaseFirestore.instance
           .collection('candidates')
-          .where('orgId', whereIn: eligibleOrgs)
           .snapshots(),
       builder: (context, snap) {
+        if (snap.hasError) {
+          return const Center(child: Text('Unable to load candidates. Please try again later.'));
+        }
         if (!snap.hasData) {
           return const Center(child: CircularProgressIndicator());
         }
         final docs = snap.data!.docs.map((d) => d.data()).toList();
 
         // Filter: For USG Representatives, only show matching user department
+        final dNorm = userDept.trim().isEmpty ? '' : userDept.trim().toUpperCase().replaceAll(' ', '');
+        final eligibleSet = eligibleOrgs.map((e) => e.trim().toUpperCase().replaceAll(' ', '')).toSet();
         final filtered = docs.where((c) {
           final org = c['orgId'] as String?;
           final pos = c['positionName'] as String?;
           final deptId = c['departmentId'] as String?;
+          final orgNorm = (org ?? '').trim().toUpperCase().replaceAll(' ', '');
+          if (!eligibleSet.contains(orgNorm)) return false;
           if (org == 'USG' && pos == 'Representative') {
-            return deptId == userDept;
+            // If user's department is unknown, don't filter out reps so students can still view
+            if (dNorm.isEmpty) return true;
+            final cNorm = (deptId ?? '').toString().trim().toUpperCase().replaceAll(' ', '');
+            return cNorm == dNorm;
           }
           // For other positions/orgs, show as-is
           return true;
@@ -110,7 +141,7 @@ class _CandidatesList extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          (org == 'USG' && pos == 'Representative') ? (userDept + ' Representative') : pos,
+                          (org == 'USG' && pos == 'Representative') ? ((userDept.isEmpty ? '' : userDept + ' ') + 'Representative') : pos,
                           style: const TextStyle(fontWeight: FontWeight.w600),
                         ),
                         const SizedBox(height: 8),
