@@ -130,6 +130,9 @@ class _AdminRegisterUserScreenState extends State<AdminRegisterUserScreen> {
           password: pass,
         );
         final uid = cred.user!.uid;
+        try {
+          await cred.user!.updateDisplayName(name);
+        } catch (_) {}
         await UserService().upsertUser(uid: uid, name: name, studentId: id, departmentId: _department);
         await UserService().setUserRole(uid: uid, role: 'student', departmentId: _department);
         if (!mounted) return;

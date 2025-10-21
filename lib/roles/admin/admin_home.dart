@@ -13,7 +13,6 @@ class AdminHome extends StatelessWidget {
   Widget build(BuildContext context) {
     final auth = AuthService();
     return Scaffold(
-      appBar: AppBar(title: const Text('ELECOM Admin')),
       body: Center(
         child: SizedBox(
           width: 320,

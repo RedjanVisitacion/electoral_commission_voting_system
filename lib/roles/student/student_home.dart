@@ -3,6 +3,8 @@ import 'package:flutter_project/auth/auth_service.dart';
 import 'package:flutter_project/auth/login_screen.dart';
 import 'package:flutter_project/widgets/placeholder_page.dart';
 import 'package:flutter_project/roles/student/student_vote_screen.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter_project/services/user_service.dart';
 
 class StudentHome extends StatelessWidget {
   const StudentHome({super.key});
@@ -10,6 +12,11 @@ class StudentHome extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final auth = AuthService();
+    final user = FirebaseAuth.instance.currentUser;
+    final displayName = user?.displayName?.trim();
+    final userName = (displayName != null && displayName.isNotEmpty)
+        ? displayName
+        : (user?.email?.split('@').first ?? 'Student');
     return Scaffold(
       appBar: AppBar(title: const Text('ELECOM Student')),
       body: Center(
@@ -29,18 +36,22 @@ class StudentHome extends StatelessWidget {
               const SizedBox(height: 12),
               const Text('ELECOM', style: TextStyle(fontSize: 20, fontWeight: FontWeight.w600)),
               const SizedBox(height: 4),
+              FutureBuilder<String>(
+                future: _getWelcomeName(),
+                builder: (context, snapshot) {
+                  final nameToShow = (snapshot.data ?? userName);
+                  return Text('Welcome $nameToShow to Electoral Voting System');
+                },
+              ),
+              const SizedBox(height: 4),
               const Text('Student Dashboard', style: TextStyle(color: Colors.black87)),
               const SizedBox(height: 24),
-              _menuBtn(context, Icons.dashboard, 'Dashboard', () => _open(context, 'Dashboard')),
-              const SizedBox(height: 12),
               _menuBtn(context, Icons.how_to_vote, 'Vote', () {
                 Navigator.push(
                   context,
                   MaterialPageRoute(builder: (_) => const StudentVoteScreen()),
                 );
               }),
-              const SizedBox(height: 12),
-              _menuBtn(context, Icons.task_alt, 'Confirm Vote', () => _open(context, 'Confirm Vote')),
               const SizedBox(height: 12),
               _menuBtn(context, Icons.receipt_long, 'Print Receipt', () => _open(context, 'Print Receipt')),
               const SizedBox(height: 24),
@@ -122,5 +133,45 @@ class StudentHome extends StatelessWidget {
         builder: (_) => PlaceholderPage(title: title, description: '$title screen placeholder'),
       ),
     );
+  }
+
+  Future<String> _getWelcomeName() async {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user == null) return 'Student';
+    // 1) Try Firestore by UID
+    final fromUid = await UserService().getUserName(user.uid);
+    if ((fromUid ?? '').trim().isNotEmpty) {
+      // keep Auth profile in sync for future fallbacks
+      _maybeUpdateDisplayName(fromUid!.trim());
+      return fromUid.trim();
+    }
+    // 2) Try Firestore by studentId (email local-part)
+    final local = (user.email ?? '').split('@').first;
+    if (local.isNotEmpty) {
+      final fromId = await UserService().getUserNameByStudentId(local);
+      if ((fromId ?? '').trim().isNotEmpty) {
+        _maybeUpdateDisplayName(fromId!.trim());
+        return fromId.trim();
+      }
+    }
+    // 3) Fallbacks
+    final dn = (user.displayName ?? '').trim();
+    if (dn.isNotEmpty) return dn;
+    if (local.isNotEmpty) return local;
+    return 'Student';
+  }
+
+  void _maybeUpdateDisplayName(String name) async {
+    try {
+      final u = FirebaseAuth.instance.currentUser;
+      if (u == null) return;
+      final current = (u.displayName ?? '').trim();
+      final newName = name.trim();
+      if (current != newName && newName.isNotEmpty) {
+        await u.updateDisplayName(newName);
+      }
+    } catch (_) {
+      // ignore; non-critical
+    }
   }
 }
