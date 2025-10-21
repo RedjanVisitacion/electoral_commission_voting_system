@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_project/auth/auth_service.dart';
 import 'package:flutter_project/auth/login_screen.dart';
 import 'package:flutter_project/widgets/placeholder_page.dart';
+import 'package:flutter_project/roles/student/student_vote_screen.dart';
 
 class StudentHome extends StatelessWidget {
   const StudentHome({super.key});
@@ -32,7 +33,12 @@ class StudentHome extends StatelessWidget {
               const SizedBox(height: 24),
               _menuBtn(context, Icons.dashboard, 'Dashboard', () => _open(context, 'Dashboard')),
               const SizedBox(height: 12),
-              _menuBtn(context, Icons.how_to_vote, 'Vote', () => _open(context, 'Vote')),
+              _menuBtn(context, Icons.how_to_vote, 'Vote', () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (_) => const StudentVoteScreen()),
+                );
+              }),
               const SizedBox(height: 12),
               _menuBtn(context, Icons.task_alt, 'Confirm Vote', () => _open(context, 'Confirm Vote')),
               const SizedBox(height: 12),
