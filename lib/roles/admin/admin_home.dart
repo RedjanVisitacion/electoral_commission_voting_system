@@ -12,36 +12,49 @@ class AdminHome extends StatelessWidget {
   Widget build(BuildContext context) {
     final auth = AuthService();
     return Scaffold(
-      appBar: AppBar(title: const Text('Admin')),
+      appBar: AppBar(title: const Text('ELECOM Admin')),
       body: Center(
         child: SizedBox(
           width: 320,
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              _fullBtn(context, 'Register Users', () {
+              CircleAvatar(
+                radius: 44,
+                backgroundColor: Theme.of(context).colorScheme.primary.withOpacity(0.1),
+                child: Padding(
+                  padding: const EdgeInsets.all(8),
+                  child: Image.asset('assets/images/ELECOM.png', height: 56, fit: BoxFit.contain),
+                ),
+              ),
+              const SizedBox(height: 12),
+              const Text('ELECOM', style: TextStyle(fontSize: 20, fontWeight: FontWeight.w600)),
+              const SizedBox(height: 4),
+              const Text('Admin Dashboard', style: TextStyle(color: Colors.black87)),
+              const SizedBox(height: 24),
+              _menuBtn(context, Icons.person_add, 'Register Users', () {
                 Navigator.push(
                   context,
                   MaterialPageRoute(builder: (_) => const AdminRegisterUserScreen()),
                 );
               }),
               const SizedBox(height: 12),
-              _fullBtn(context, 'Generate QR Codes', () {
+              _menuBtn(context, Icons.qr_code, 'Generate QR Codes', () {
                 Navigator.push(
                   context,
                   MaterialPageRoute(builder: (_) => const GenerateQrScreen()),
                 );
               }),
               const SizedBox(height: 12),
-              _fullBtn(context, 'Register Candidates', () => _open(context, 'Register Candidates')),
+              _menuBtn(context, Icons.how_to_reg, 'Register Candidates', () => _open(context, 'Register Candidates')),
               const SizedBox(height: 12),
-              _fullBtn(context, 'Manage Voters', () => _open(context, 'Manage Voters')),
+              _menuBtn(context, Icons.people, 'Manage Voters', () => _open(context, 'Manage Voters')),
               const SizedBox(height: 12),
-              _fullBtn(context, 'Assign Computers', () => _open(context, 'Assign Computers')),
+              _menuBtn(context, Icons.computer, 'Assign Computers', () => _open(context, 'Assign Computers')),
               const SizedBox(height: 12),
-              _fullBtn(context, 'Generate Reports', () => _open(context, 'Generate Reports')),
+              _menuBtn(context, Icons.bar_chart, 'Generate Reports', () => _open(context, 'Generate Reports')),
               const SizedBox(height: 12),
-              _fullBtn(context, 'Publish Results', () => _open(context, 'Publish Results')),
+              _menuBtn(context, Icons.publish, 'Publish Results', () => _open(context, 'Publish Results')),
               const SizedBox(height: 24),
               SizedBox(
                 width: double.infinity,
@@ -106,6 +119,18 @@ class AdminHome extends StatelessWidget {
     return SizedBox(
       width: double.infinity,
       child: ElevatedButton(onPressed: onPressed, child: Text(label)),
+    );
+  }
+
+  Widget _menuBtn(BuildContext context, IconData icon, String label, VoidCallback onPressed) {
+    return SizedBox(
+      width: double.infinity,
+      child: ElevatedButton.icon(
+        onPressed: onPressed,
+        icon: Icon(icon),
+        label: Text(label),
+        style: ElevatedButton.styleFrom(padding: const EdgeInsets.symmetric(vertical: 14)),
+      ),
     );
   }
 
