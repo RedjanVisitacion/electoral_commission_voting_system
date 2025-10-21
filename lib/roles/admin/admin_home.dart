@@ -4,6 +4,7 @@ import 'package:flutter_project/auth/login_screen.dart';
 import 'package:flutter_project/widgets/placeholder_page.dart';
 import 'package:flutter_project/roles/admin/generate_qr_screen.dart';
 import 'package:flutter_project/roles/admin/admin_register_user_screen.dart';
+import 'package:flutter_project/roles/admin/admin_register_candidate_screen.dart';
 
 class AdminHome extends StatelessWidget {
   const AdminHome({super.key});
@@ -46,7 +47,12 @@ class AdminHome extends StatelessWidget {
                 );
               }),
               const SizedBox(height: 12),
-              _menuBtn(context, Icons.how_to_reg, 'Register Candidates', () => _open(context, 'Register Candidates')),
+              _menuBtn(context, Icons.how_to_reg, 'Register Candidates', () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (_) => const AdminRegisterCandidateScreen()),
+                );
+              }),
               const SizedBox(height: 12),
               _menuBtn(context, Icons.people, 'Manage Voters', () => _open(context, 'Manage Voters')),
               const SizedBox(height: 12),
