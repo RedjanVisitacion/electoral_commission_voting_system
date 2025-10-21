@@ -34,35 +34,112 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     return Scaffold(
-      body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 25),
-        child: Column(
-          children: [
-            const Spacer(),
-            const Text("Login",
-                style: TextStyle(fontSize: 40, fontWeight: FontWeight.w500)),
-            const SizedBox(height: 50),
-            CustomTextField(
-              hint: "Enter Student ID",
-              label: "Student ID",
-              controller: _studentId,
-            ),
-            const SizedBox(height: 20),
-            CustomTextField(
-              hint: "Enter Password",
-              label: "Password",
-              isPassword: true,
-              controller: _password,
-            ),
-            const SizedBox(height: 30),
-            CustomButton(
-              label: "Login",
-              onPressed: _loading ? null : _login,
-            ),
-            const SizedBox(height: 5),
-            const Spacer()
-          ],
+      body: SafeArea(
+        child: SingleChildScrollView(
+          child: Column(
+            children: [
+              Container(
+                width: double.infinity,
+                height: 260,
+                decoration: const BoxDecoration(
+                  gradient: LinearGradient(
+                    colors: [Color(0xFF0E7A5F), Color(0xFF095C46)],
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                  ),
+                  borderRadius: BorderRadius.only(
+                    bottomLeft: Radius.circular(24),
+                    bottomRight: Radius.circular(24),
+                  ),
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 24),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          Image.asset('assets/images/Icon-CRCL.png', height: 48),
+                          const SizedBox(width: 12),
+                          Text(
+                            'Welcome',
+                            style: theme.textTheme.headlineSmall?.copyWith(
+                              color: Colors.white,
+                              fontWeight: FontWeight.w700,
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 8),
+                      Text(
+                        'Login to your account',
+                        style: theme.textTheme.bodyMedium?.copyWith(color: Colors.white70),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              Transform.translate(
+                offset: const Offset(0, -40),
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 20),
+                  child: Container(
+                    width: double.infinity,
+                    padding: const EdgeInsets.all(16),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(16),
+                      boxShadow: const [
+                        BoxShadow(color: Colors.black12, blurRadius: 18, offset: Offset(0, 8)),
+                      ],
+                    ),
+                    
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        SizedBox(height: 30),
+                        CustomTextField(
+                          hint: "Enter Student ID",
+                          label: "Student ID",
+                          controller: _studentId,
+                        ),
+
+                        SizedBox(height: 20),
+                        const SizedBox(height: 16),
+                        CustomTextField(
+                          hint: "Enter Password",
+                          label: "Password",
+                          isPassword: true,
+                          controller: _password,
+                        ),
+                        
+                        SizedBox(height: 30),
+                        SizedBox(
+                          height: 48,
+                          child: ElevatedButton(
+                            onPressed: _loading ? null : _login,
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: const Color(0xFF0E7A5F),
+                              foregroundColor: Colors.white,
+                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(28)),
+                            ),
+                            
+                            child: const Text('Sign in'),
+                          ),
+                        ),
+                        const SizedBox(height: 14),
+                        
+                        
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 0),
+            ],
+          ),
         ),
       ),
     );
