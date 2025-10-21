@@ -10,14 +10,14 @@ class StudentLanding extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final items = <_OrgItem>[
-      _OrgItem('USG', Icons.how_to_vote, () => _open(context, 'USG')),
-      _OrgItem('ARCU', Icons.groups, () => _open(context, 'ARCU')),
-      _OrgItem('ELECOM', Icons.verified, () => _openElecom(context)),
-      _OrgItem('SITE', Icons.computer, () => _open(context, 'SITE')),
-      _OrgItem('PAFE', Icons.sports_soccer, () => _open(context, 'PAFE')),
-      _OrgItem('AFPROTECHS', Icons.science, () => _open(context, 'AFPROTECHS')),
-      _OrgItem('ACCESS', Icons.school, () => _open(context, 'ACCESS')),
-      _OrgItem('REDCOSS', Icons.volunteer_activism, () => _open(context, 'REDCOSS')),
+      _OrgItem('USG', 'USG.png', () => _open(context, 'USG')),
+      _OrgItem('ARCU', 'ARCU.png', () => _open(context, 'ARCU')),
+      _OrgItem('ELECOM', 'ELECOM.png', () => _openElecom(context)),
+      _OrgItem('SITE', 'SITE.png', () => _open(context, 'SITE')),
+      _OrgItem('PAFE', 'PAFE.png', () => _open(context, 'PAFE')),
+      _OrgItem('AFPROTECHS', 'AFPROTECH.png', () => _open(context, 'AFPROTECHS')),
+      _OrgItem('ACCESS', 'ACCESS.png', () => _open(context, 'ACCESS')),
+      _OrgItem('REDCOSS', 'REDCROSS.png', () => _open(context, 'REDCOSS')),
     ];
 
     return Scaffold(
@@ -111,9 +111,9 @@ class StudentLanding extends StatelessWidget {
 
 class _OrgItem {
   final String label;
-  final IconData icon;
+  final String assetFileName; 
   final VoidCallback onTap;
-  _OrgItem(this.label, this.icon, this.onTap);
+  _OrgItem(this.label, this.assetFileName, this.onTap);
 }
 
 class _OrgCard extends StatelessWidget {
@@ -138,7 +138,15 @@ class _OrgCard extends StatelessWidget {
               CircleAvatar(
                 radius: 28,
                 backgroundColor: Theme.of(context).colorScheme.primary.withOpacity(0.12),
-                child: Icon(item.icon, size: 28, color: Theme.of(context).colorScheme.primary),
+                child: Padding(
+                  padding: const EdgeInsets.all(6),
+                  child: Image.asset(
+                    'assets/images/' + item.assetFileName,
+                    width: 32,
+                    height: 32,
+                    fit: BoxFit.contain,
+                  ),
+                ),
               ),
               const SizedBox(height: 10),
               Text(item.label, style: const TextStyle(fontWeight: FontWeight.w500)),
