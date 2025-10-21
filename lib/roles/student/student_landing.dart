@@ -17,12 +17,19 @@ class StudentLanding extends StatelessWidget {
       _OrgItem('PAFE', 'PAFE.png', () => _open(context, 'PAFE')),
       _OrgItem('AFPROTECHS', 'AFPROTECH.png', () => _open(context, 'AFPROTECHS')),
       _OrgItem('ACCESS', 'ACCESS.png', () => _open(context, 'ACCESS')),
-      _OrgItem('REDCOSS', 'REDCROSS.png', () => _open(context, 'REDCOSS')),
+      _OrgItem('RED COSS', 'REDCROSS.png', () => _open(context, 'RED COSS')),
     ];
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('SocieTree'),
+        title: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Image.asset('assets/images/Icon-CRCL.png', height: 28),
+            const SizedBox(width: 8),
+            const Text('SocieTree'),
+          ],
+        ),
         actions: [
           IconButton(
             tooltip: 'Logout',
@@ -60,7 +67,7 @@ class StudentLanding extends StatelessWidget {
                   ),
                   SizedBox(height: 8),
                   Text(
-                    'SocieTree centralizes campus organizations. Browse groups and open their pages. Tap ELECOM to access the student voting dashboard.',
+                    'SocieTree is an innovative digital ecosystem at the University of Science and Technology of Southern Philippines (USTP) that unites and empowers the diverse student organizations across campus. Acting as both a technological platform and community hub, SocieTREE facilitates seamless collaboration, enhances student engagement, and nurtures the next generation of leaders through integrated digital solutions.\n\nAs the central nexus for USTP\'s vibrant organizational landscape, SocieTREE cultivates a culture of excellence, innovation, and civic responsibility. The platform supports a thriving network of student groups, including: ',
                     style: TextStyle(color: Colors.black87),
                   ),
                   SizedBox(height: 16),
